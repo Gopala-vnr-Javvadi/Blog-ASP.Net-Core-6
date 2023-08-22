@@ -1,5 +1,6 @@
 ﻿using Blog_ASP.Net_Core_6.Data;
 using Blog_ASP.Net_Core_6.Models;
+using Blog_ASP.Net_Core_6.Services.Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -16,11 +17,13 @@ namespace Blog_ASP.Net_Core_6.Controllers
     [ApiController]
     public class LoginController : ControllerBase
     {
-        private IConfiguration _config;
+        //private IConfiguration _config;
+        private readonly ILoginRepository _loginRepository;
 
-        public LoginController(IConfiguration config)
+        public LoginController(/*IConfiguration config,*/ ILoginRepository loginRepository)
         {
-            _config = config;
+           // _config = config;
+            _loginRepository = loginRepository;
         }
        
        
@@ -28,50 +31,18 @@ namespace Blog_ASP.Net_Core_6.Controllers
         [AllowAnonymous]
         public IActionResult Login([FromBody] UserLogin userLogin)
         {
-            var user = Authenticate(userLogin);
+            var user = _loginRepository.Authenticate(userLogin);
 
             if (user != null)
             {
-                var token = Generate(user);
+                var token = _loginRepository.Generate(user);
                 return Ok(token);
             }
 
             return NotFound("User not found");
         }
 
-        private string Generate(UserModel user)
-        {
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
-            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+     
 
-            var claims = new[]
-            {
-                new Claim(ClaimTypes.NameIdentifier, user.Username),
-                new Claim(ClaimTypes.Email, user.EmailAddress),
-                //new Claim(ClaimTypes.GivenName, user.GivenName),
-                new Claim(ClaimTypes.Surname, user.Surname),
-                new Claim(ClaimTypes.Role, user.Role)
-            };
-
-            var token = new JwtSecurityToken(_config["Jwt:Issuer"],
-              _config["Jwt:Audience"],
-              claims,
-              expires: DateTime.Now.AddMinutes(15),
-              signingCredentials: credentials);
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
-        }
-
-        private UserModel Authenticate(UserLogin userLogin)
-        {
-            var currentUser = UserConstants.Users.FirstOrDefault(o => o.EmailAddress.ToLower() == userLogin.EmailAddress.ToLower() && o.Password == userLogin.Password);
-
-            if (currentUser != null)
-            {
-                return currentUser;
-            }
-
-            return null;
-        }
     }
 }

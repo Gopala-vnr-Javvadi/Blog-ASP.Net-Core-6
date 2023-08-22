@@ -15,7 +15,7 @@ namespace Blog_ASP.Net_Core_6.Models
                 Role = "Administrator" ,
                 ImageUrl="https://localhost:7086/Images/Profile/admin.jpg",
                 Gender = "Male",
-                                                          },
+                     PhoneNumber=1234567890,                                     },
             new UserModel() { Username = "elyse_seller", EmailAddress = "elyse.seller@email.com", Password = "MyPass_w0rd", Gender = "Male",Surname = "Lambert", Role = "User",ImageUrl="https://localhost:7086/Images/Profile/admin.jpg"  },
             new UserModel() { Username = "Gopala", EmailAddress = "gopala.vnr@gmail.com", Password = "1234567890", Gender = "Male",  Surname = "Javvadi", Role = "User" ,ImageUrl="https://localhost:7086/Images/Profile/admin.jpg"  },
         };
@@ -76,6 +76,18 @@ namespace Blog_ASP.Net_Core_6.Models
               new BlogPost() {
                 BlogId = 4,
                 Title = "Reading is a Godd habit",
+                EmailAddress = "jason.admin@email.com",
+                Content = "Reading is knowledge to knoe the important information ",
+                Image = "https://www.w3schools.com/html/pic_trulli.jpg",
+                CreatedBy  = "jason_admin",
+                UpdatedBy = null,
+                CreatedDate = DateTime.UtcNow.ToLocalTime().ToString("20-June-2023 02:02:02"),
+                UpdatedDate =  null,
+                Category = "Lifestyle",
+             },
+               new BlogPost() {
+                BlogId = 4,
+                Title = "Reading is a Godd habit........................................dfsf",
                 EmailAddress = "jason.admin@email.com",
                 Content = "Reading is knowledge to knoe the important information ",
                 Image = "https://www.w3schools.com/html/pic_trulli.jpg",

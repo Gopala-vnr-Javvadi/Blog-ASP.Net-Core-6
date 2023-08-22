@@ -1,36 +1,19 @@
 ﻿using Blog_ASP.Net_Core_6.Data;
 using Blog_ASP.Net_Core_6.Models;
 using Blog_ASP.Net_Core_6.Services.Interface;
-using Blog_ASP.Net_Core_6.Services.Repository;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json.Linq;
-using static System.Net.Mime.MediaTypeNames;
-using static System.Net.WebRequestMethods;
-using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace Blog_ASP.Net_Core_6.Controllers
 {
-
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class BlogPostsController : ControllerBase
     {
-        private IHostingEnvironment hostingEnv;
-        private IBlogRepository @object;
         private readonly BlogDBContext _dbContext;
         private readonly IBlogRepository _blogRepository;
-        private readonly string _path = "";
-
         private readonly IWebHostEnvironment _environment;
 
-        //public BlogPostsController(IBlogRepository blogRepository)
-        //{
-        //    _blogRepository = blogRepository;
-        //}
         public BlogPostsController(IWebHostEnvironment environment, IBlogRepository blogRepository)
         {
             _environment = environment;
@@ -44,7 +27,7 @@ namespace Blog_ASP.Net_Core_6.Controllers
         {
 
             var pathNameOnly = string.Empty;
-            if (file != null || file.Length != 0)
+            if (file != null )
             {
                 //  return BadRequest("File not selected or invalid file.");
 
@@ -95,7 +78,6 @@ namespace Blog_ASP.Net_Core_6.Controllers
 
 
         [HttpGet("MyProfile")]
-        [AllowAnonymous]
         public IActionResult GetProfile(string email)
         {
             UserModel objProfile = _blogRepository.GetProfile(email);
@@ -108,7 +90,7 @@ namespace Blog_ASP.Net_Core_6.Controllers
         }
 
         [HttpGet("GetMyBlogById")]
-        [AllowAnonymous]
+
         public IActionResult GetMyBlogById(int BlogId)
         {
             BlogPost objBlogPostById = _blogRepository.GetMyBlogById(BlogId);
@@ -122,7 +104,7 @@ namespace Blog_ASP.Net_Core_6.Controllers
         
 
         [HttpGet]
-        [AllowAnonymous]
+
         public IActionResult GetBlogPosts()
         {
             IEnumerable<BlogPost> objGetBlogPost = _blogRepository.GetBlogs();
@@ -134,7 +116,7 @@ namespace Blog_ASP.Net_Core_6.Controllers
         }
         
         [HttpGet("GetComments")]
-        [AllowAnonymous]
+
         public IActionResult GetBlogComments(int BlogId)
         {
 

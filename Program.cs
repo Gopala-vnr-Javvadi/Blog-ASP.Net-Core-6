@@ -18,6 +18,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddControllers().AddNewtonsoftJson();
 builder.Services.AddScoped<IBlogRepository, BlogRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>(); 
+builder.Services.AddScoped<ILoginRepository, LoginRepository>(); 
 builder.Services.AddDbContext<BlogDBContext>(options => options.UseSqlServer(
 
     builder.Configuration.GetConnectionString("DefaultConnection")
@@ -33,11 +34,7 @@ builder.Services.AddCors(options =>
                           policy.WithOrigins("*").AllowAnyMethod().AllowAnyHeader();
                       });
 });
-////services cors
-//builder.Services.AddCors(p => p.AddPolicy("corsapp", builder =>
-//{
-//    builder.WithOrigins("*").AllowAnyMethod().AllowAnyHeader();
-//}));
+
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
@@ -69,11 +66,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-////app.UseStaticFiles(new StaticFileOptions
-////{
-////    FileProvider = new PhysicalFileProvider(Path.Combine(app.Environment.ContentRootPath, "images")),
-////    RequestPath = "/images"
-////});
 
 app.UseStaticFiles();// For the wwwroot folder
 
@@ -91,7 +83,7 @@ app.UseDirectoryBrowser(new DirectoryBrowserOptions
     RequestPath = "/Images"
 });
 
-//app.UseMvc();
+
 
 app.UseHttpsRedirection();
 app.UseCors(MyAllowSpecificOrigins);

@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>Blog_ASP.Net_Core_6</RootNamespace>
+    <SonarQubeTestProject>False</SonarQubeTestProject>
   </PropertyGroup>
 
   <ItemGroup>

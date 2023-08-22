@@ -14,7 +14,7 @@ using System.Security.Claims;
 
 namespace Blog_ASP.Net_Core_6.Controllers
 {
-    
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class UserController : ControllerBase
@@ -31,93 +31,45 @@ namespace Blog_ASP.Net_Core_6.Controllers
             _userRepository = userRepository;
         }
 
-        [HttpGet("Admins")]
-        [Authorize(Roles = "Administrator")]
-        public IActionResult AdminsEndpoint()
-        {
-            var currentUser = GetCurrentUser();
-
-            return Ok($"Hi {currentUser.Username}, you are an {currentUser.Role}");
-        }
-
-
-        //[HttpPost("File")]
-        //public async Task<IActionResult> UploadFile(IFormFile file, [FromForm] BlogPost objBlogPost)
-        //{
-        //    if (file == null || file.Length == 0)
-        //    {
-        //        return BadRequest("File not selected or invalid file.");
-        //    }
-
-        //    // Process the file and otherData here as needed
-        //    // For example, save the file to a database or storage, etc.
-
-        //    // Save the uploaded file to the "uploads" folder
-        //    var uploadsPath = Path.Combine(_environment.ContentRootPath, "Profile");
-        //    if (!Directory.Exists(uploadsPath))
-        //    {
-        //        Directory.CreateDirectory(uploadsPath);
-        //    }
-        //    string filenameOnly = Path.GetFileNameWithoutExtension(file.FileName);
-        //    string extension = Path.GetExtension(file.FileName);
-        //    string dateTime = DateTime.UtcNow.ToLocalTime().ToString("ddMMyyyyHHmmss");
-
-        //    var fileName = Path.Combine(uploadsPath, filenameOnly + dateTime + extension);
-        //    using (var stream = new FileStream(fileName, FileMode.Create))
-        //    {
-        //        await file.CopyToAsync(stream);
-        //    }
-
-        //    var pathNameOnly = "https://localhost:7086/" + "Images/Profile/" + filenameOnly + dateTime + extension;
-
-        //    if (objBlogPost != null)
-        //    {
-        //        objBlogPost.Image = pathNameOnly;
-        //        _userRepository.CreateNewUser(objBlogPost);
-        //         return Ok($"Your New post is Created and posted");
-        //    }
-
-        //    return Ok(new { message = "Upload successful!", fileName, objBlogPost });
-        //}
+        
 
         [HttpPost("CreateNewUser")]
        // [Authorize(Roles = "User")]
         public async Task<IActionResult> CreateUser(IFormFile file, [FromForm] UserModel objNewUser)
         {
-
-            if (file == null || file.Length == 0)
+            var pathNameOnly = string.Empty;
+            if (file != null)
             {
-                return BadRequest("File not selected or invalid file.");
+
+
+
+                // Process the file and otherData here as needed
+                // For example, save the file to a database or storage, etc.
+
+                // Save the uploaded file to the "uploads" folder
+                var uploadsPath = Path.Combine(_environment.ContentRootPath, "Images\\Profile");
+                if (!Directory.Exists(uploadsPath))
+                {
+                    Directory.CreateDirectory(uploadsPath);
+                }
+                string filenameOnly = Path.GetFileNameWithoutExtension(file.FileName);
+                string extension = Path.GetExtension(file.FileName);
+                string dateTime = DateTime.UtcNow.ToLocalTime().ToString("ddMMyyyyHHmmss");
+
+                var fileName = Path.Combine(uploadsPath, filenameOnly + dateTime + extension);
+                using (var stream = new FileStream(fileName, FileMode.Create))
+                {
+                    await file.CopyToAsync(stream);
+                }
+
+                pathNameOnly = "https://localhost:7086/" + "Images/Profile/" + filenameOnly + dateTime + extension;
             }
-
-            // Process the file and otherData here as needed
-            // For example, save the file to a database or storage, etc.
-
-            // Save the uploaded file to the "uploads" folder
-            var uploadsPath = Path.Combine(_environment.ContentRootPath, "Images\\Profile");
-            if (!Directory.Exists(uploadsPath))
-            {
-                Directory.CreateDirectory(uploadsPath);
-            }
-            string filenameOnly = Path.GetFileNameWithoutExtension(file.FileName);
-            string extension = Path.GetExtension(file.FileName);
-            string dateTime = DateTime.UtcNow.ToLocalTime().ToString("ddMMyyyyHHmmss");
-
-            var fileName = Path.Combine(uploadsPath, filenameOnly + dateTime + extension);
-            using (var stream = new FileStream(fileName, FileMode.Create))
-            {
-                await file.CopyToAsync(stream);
-            }
-
-            var pathNameOnly = "https://localhost:7086/" + "Images/Profile/" + filenameOnly + dateTime + extension;
-
             if (objNewUser != null)
             {
                 objNewUser.ImageUrl = pathNameOnly;
                 _userRepository.CreateNewUser(objNewUser);
-                // return Ok($"Your New post is Created and posted");
             }
-              //return Ok($"Hi {currentUser.Username}, you are an {currentUser.Role}");
+
              return Ok( $"User { objNewUser.Username}, is Created");
             
 
@@ -128,11 +80,11 @@ namespace Blog_ASP.Net_Core_6.Controllers
         // [Authorize(Roles = "User")]
         public async Task<IActionResult> UpdateUser(IFormFile file, [FromForm] UserModel objNewUser)
         {
-
-            if (file == null || file.Length == 0)
+            var pathNameOnly = "";
+            if (file != null )
             {
-              //  return BadRequest("File not selected or invalid file.");
-            }
+             
+           
 
             // Process the file and otherData here as needed
             // For example, save the file to a database or storage, etc.
@@ -153,46 +105,53 @@ namespace Blog_ASP.Net_Core_6.Controllers
                 await file.CopyToAsync(stream);
             }
 
-            var pathNameOnly = "https://localhost:7086/" + "Images/Profile/" + filenameOnly + dateTime + extension;
-
+             pathNameOnly = "https://localhost:7086/" + "Images/Profile/" + filenameOnly + dateTime + extension;
+            }
             if (objNewUser != null)
             {
                 objNewUser.ImageUrl = pathNameOnly;
                 _userRepository.UpdateUser(objNewUser);
-                // return Ok($"Your New post is Created and posted");
+               
             }
-            //return Ok($"Hi {currentUser.Username}, you are an {currentUser.Role}");
             return Ok($"User {objNewUser.Username}, is Updated");
 
 
         }
 
 
+        //[HttpGet("Admins")]
+        //[Authorize(Roles = "Administrator")]
+        //public IActionResult AdminsEndpoint()
+        //{
+        //    var currentUser = GetCurrentUser();
+
+        //    return Ok($"Hi {currentUser.Username}, you are an {currentUser.Role}");
+        //}
 
 
-        [HttpGet("Sellers")]
-        [Authorize(Roles = "Seller")]
-        public IActionResult SellersEndpoint()
-        {
-            var currentUser = GetCurrentUser();
+        //[HttpGet("Sellers")]
+        //[Authorize(Roles = "Seller")]
+        //public IActionResult SellersEndpoint()
+        //{
+        //    var currentUser = GetCurrentUser();
 
-            return Ok($"Hi {currentUser.Username}, you are a {currentUser.Role}");
-        }
+        //    return Ok($"Hi {currentUser.Username}, you are a {currentUser.Role}");
+        //}
 
-        [HttpGet("AdminsAndSellers")]
-        [Authorize(Roles = "Administrator,Seller")]
-        public IActionResult AdminsAndSellersEndpoint()
-        {
-            var currentUser = GetCurrentUser();
+        //[HttpGet("AdminsAndSellers")]
+        //[Authorize(Roles = "Administrator,Seller")]
+        //public IActionResult AdminsAndSellersEndpoint()
+        //{
+        //    var currentUser = GetCurrentUser();
 
-            return Ok($"Hi {currentUser.Username}, you are an {currentUser.Role}");
-        }
+        //    return Ok($"Hi {currentUser.Username}, you are an {currentUser.Role}");
+        //}
 
-        [HttpGet("Public")]
-        public IActionResult Public()
-        {
-            return Ok("Hi, you're on public property");
-        }
+        //[HttpGet("Public")]
+        //public IActionResult Public()
+        //{
+        //    return Ok("Hi, you're on public property");
+        //}
 
         private UserModel GetCurrentUser()
         {
